@@ -9,6 +9,7 @@ workflow line1 {
         Boolean paired_end = true
         String read1_range = 'L1HS:1-20'
         String read2_range = 'L1HS'
+        String unpaired_range = 'L1HS:1-150'
         Int max_edit_distance = 2
         Int clip_max = 20
         Float downsample_to = 1.0
@@ -29,6 +30,7 @@ workflow line1 {
             paired_end = paired_end,
             read1_range = read1_range,
             read2_range = read2_range,
+            unpaired_range = unpaired_range,
             max_edit_distance = max_edit_distance,
             clip_max = clip_max,
             downsample_to = downsample_to,
@@ -52,6 +54,7 @@ task run_line1_counting {
         Boolean paired_end
         String read1_range
         String read2_range
+        String unpaired_range
         Int max_edit_distance
         Int clip_max
         Float downsample_to
@@ -71,6 +74,7 @@ task run_line1_counting {
         paired_end = ~{true="True" false="False" paired_end}
         read1_range = "~{read1_range}"
         read2_range = "~{read2_range}"
+        unpaired_range = "~{unpaired_range}"
         max_edit_distance = ~{max_edit_distance}
         clip_max = ~{clip_max}
         downsample_to = ~{downsample_to}
@@ -103,7 +107,7 @@ task run_line1_counting {
                     UMI_dict[CB] = r1_UMI_dict[CB].intersection(r2_UMI_dict[CB])
         } else {
             UMI_dict = dict()
-            for read in bam.fetch(region=range):
+            for read in bam.fetch(region=unpaired_range):
                 if random.random() < downsample_to and read.has_tag("nM") and read.get_tag("nM") <= max_edit_distance and read.has_tag("CB") and read.has_tag("UB") and read.is_reverse and 'N' not in read.cigarstring:
                     if (read.cigartuples[0][0] != 4 or (read.cigartuples[0][1] <= clip_max)) and (read.cigartuples[-1][0] != 4 or (read.cigartuples[-1][1] <= clip_max)):
                         CB = read.get_tag("CB")
