@@ -70,8 +70,9 @@ task run_line1_counting {
         eval "$(micromamba shell hook --shell=bash)"
         micromamba activate base
         python <<CODE
-        from subprocess import check_call
         import os
+        import pysam
+        import pandas as pd
 
         paired_end = ~{true="True" false="False" paired_end}
         read1_range = "~{read1_range}"
