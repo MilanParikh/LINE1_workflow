@@ -83,7 +83,7 @@ task run_line1_counting {
 
         bam = pysam.AlignmentFile("~{bam_file}",'rb')
 
-        if(paired_end) {
+        if(paired_end):
             r1_UMI_dict = dict()
             for read in bam.fetch(region=read1_range):
                 if random.random() < downsample_to and read.is_read1 and read.has_tag("nM") and read.get_tag("nM") <= max_edit_distance and read.has_tag("CB") and read.has_tag("UB") and not read.is_reverse and read.cigarstring[-1]!='S' and 'N' not in read.cigarstring:
@@ -107,7 +107,7 @@ task run_line1_counting {
             for CB in r1_UMI_dict:
                 if CB in r2_UMI_dict:
                     UMI_dict[CB] = r1_UMI_dict[CB].intersection(r2_UMI_dict[CB])
-        } else {
+        else:
             UMI_dict = dict()
             for read in bam.fetch(region=unpaired_range):
                 if random.random() < downsample_to and read.has_tag("nM") and read.get_tag("nM") <= max_edit_distance and read.has_tag("CB") and read.has_tag("UB") and read.is_reverse and 'N' not in read.cigarstring:
@@ -117,7 +117,6 @@ task run_line1_counting {
                         if CB not in UMI_dict:
                             UMI_dict[CB] = set()
                         UMI_dict[CB].add(UB)
-        }
 
         count_df = pd.DataFrame(index=list(UMI_dict.keys()), columns=['counts'])
         count_df['counts'] = [len(val) for val in UMI_dict.values()]
