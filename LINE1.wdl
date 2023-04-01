@@ -73,6 +73,7 @@ task run_line1_counting {
         import os
         import pysam
         import pandas as pd
+        import random
 
         paired_end = ~{true="True" false="False" paired_end}
         read1_range = "~{read1_range}"
