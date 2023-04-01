@@ -67,6 +67,8 @@ task run_line1_counting {
     command <<<
         set -e
 
+        eval "$(micromamba shell hook --shell=bash)"
+        micromamba activate base
         python <<CODE
         from subprocess import check_call
         import os
